@@ -7,13 +7,15 @@
     "easy-peasy": "^1.6.1",
     "electron-is-dev": "^1.0.1",
     "electron-publisher-s3": "^20.17.2",
+    "electron-store": "^2.0.0",
     "howler": "^2.0.15",
     "react": "^16.7.0-alpha.0",
     "react-dom": "^16.7.0-alpha.0",
+    "react-router-dom": "^4.3.1",
     "react-scripts": "2.1.1"
   },
   "scripts": {
-    "start": "concurrently \"cross-env BROWSER=none react-scripts start\" \"wait-on http://localhost:3000 && electron .\"",
+    "start": "concurrently -k \"cross-env BROWSER=none react-scripts start\" \"wait-on http://localhost:3000 && electron .\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "pack": "electron-builder --dir",

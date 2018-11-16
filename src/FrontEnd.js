@@ -1,5 +1,10 @@
 import React from 'react'
 import { useStore, useAction } from 'easy-peasy'
+const { ipcRenderer } = window.require('electron')
+
+const openChildWindow = route => {
+  ipcRenderer.send('open-child-window', route)
+}
 
 export default () => {
   const { isPlaying, queue, queuePos } = useStore(state => state.player)
@@ -24,6 +29,9 @@ export default () => {
         {isPlaying ? 'pause' : 'play'}
       </button>
       <button onClick={() => next()}>next</button>
+      <button onClick={() => openChildWindow('settings')}>
+        open child window
+      </button>
     </div>
   )
 }

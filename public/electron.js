@@ -1,12 +1,6 @@
-const {
-  app,
-  BrowserWindow,
-  shell,
-  ipcMain,
-  Menu,
-  TouchBar
-} = require('electron')
-const { TouchBarButton, TouchBarLabel, TouchBarSpacer } = TouchBar
+const { app, BrowserWindow, shell, ipcMain, Menu } = require('electron')
+const Store = require('electron-store')
+const store = new Store()
 
 const path = require('path')
 const isDev = require('electron-is-dev')
@@ -20,8 +14,8 @@ createWindow = () => {
     show: false,
     titleBarStyle: 'hidden',
     webPreferences: {
-      nodeIntegration: false,
-      preload: __dirname + '/preload.js'
+      preload: __dirname + '/preload.js',
+      webSecurity: !isDev
     },
     height: 860,
     width: 1280
@@ -59,6 +53,7 @@ createWindow = () => {
 
   mainWindow.once('ready-to-show', () => {
     mainWindow.show()
+    if (isDev) mainWindow.webContents.openDevTools()
 
     ipcMain.on('open-external-window', (event, arg) => {
       shell.openExternal(arg)
@@ -145,4 +140,25 @@ app.on('activate', () => {
 
 ipcMain.on('load-page', (event, arg) => {
   mainWindow.loadURL(arg)
+})
+
+ipcMain.on('open-child-window', (event, arg) => {
+  let child = new BrowserWindow({
+    parent: mainWindow,
+    modal: true,
+    show: false
+  })
+  child.loadURL(
+    isDev
+      ? `http://localhost:3000/${arg}`
+      : URL.format({
+        pathName: path.join(__dirname, '../build/index.html'),
+        protocol: 'file:',
+        slashes: true,
+        hash: arg
+      })
+  )
+  child.once('ready-to-show', () => {
+    child.show()
+  })
 })
