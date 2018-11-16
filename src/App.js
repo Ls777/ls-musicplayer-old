@@ -1,12 +1,12 @@
-import React, { Component, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import './App.css'
 import FrontEnd from './FrontEnd'
-import audioPlayer from './audioPlayer.js'
+import { useAction } from 'easy-peasy'
 
-class App extends Component {
-  render () {
-    return <FrontEnd />
-  }
+const App = () => {
+  const initialize = useAction(dispatch => dispatch.player.fetchStoredQueue)
+  useEffect(() => initialize(), [])
+  return <FrontEnd />
 }
 
 export default App

@@ -2,21 +2,28 @@ import React from 'react'
 import { useStore, useAction } from 'easy-peasy'
 
 export default () => {
-  const player = useStore(state => state.player)
-  const play = useAction(dispatch => dispatch.player.play)
+  const { isPlaying, queue, queuePos } = useStore(state => state.player)
+  const { play, pause, next, prev, skipTo } = useAction(
+    dispatch => dispatch.player
+  )
   return (
     <div>
-      <h3>playlist</h3>
+      <h3>Queue</h3>
       <ul>
-        <li>song 1</li>
-        <li>song 2</li>
+        {queue.map((item, idx) => (
+          <li onDoubleClick={() => skipTo(idx)}>
+            {item.src + (idx === queuePos ? ' -- now playing!' : '')}
+          </li>
+        ))}
       </ul>
       <h3>player</h3>
-      <div>{player.isPlaying ? 'yes' : 'no'}</div>
+      <div>{isPlaying ? 'yes' : 'no'}</div>
       <input id='slide' type='range' min='0' max='100' step='1' />
-      <button>prev</button>
-      <button onClick={play}>pause</button>
-      <button>next</button>
+      <button onClick={() => prev()}>prev</button>
+      <button onClick={isPlaying ? () => pause() : () => play()}>
+        {isPlaying ? 'pause' : 'play'}
+      </button>
+      <button onClick={() => next()}>next</button>
     </div>
   )
 }
